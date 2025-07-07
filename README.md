@@ -18,10 +18,10 @@ in a very early stage. There's no CPU emulation yet.
 If you need to run unit tests, you will need to install
 `googletest` from [Homebrew](https://brew.sh/):
 
-'''sh
+```sh
 brew update
 brew install googletest
-'''
+```
 
 ## Installation
 
