@@ -15,7 +15,8 @@ in a very early stage. There's no CPU emulation yet.
 
 ## Prerequisites
 
-If you need to run unit tests, you will need to install
+* MacOS with Xcode installed;
+* If you need to run unit tests, you will need to install
 `googletest` from [Homebrew](https://brew.sh/):
 
 ```sh
