@@ -48,15 +48,20 @@ T interp(T s0, T s1, float x)
 
 fragment float4 fragment_func(VertexOutput frag_in [[stage_in]], texture2d<float, access::sample> frame [[texture(0)]])
 {
-    float3x4 samples = float3x4(exp(frame.gather(smp, frag_in.texcoord, int2(0), component::x)),
-                                exp(frame.gather(smp, frag_in.texcoord, int2(0), component::y)),
-                                exp(frame.gather(smp, frag_in.texcoord, int2(0), component::z)));
+    auto pixel_position = float2(frag_in.texcoord.x * (frame.get_width() - 1), frag_in.texcoord.y * (frame.get_height() - 1));
     
-    auto offset = fract(float3x2(frame.get_width(), 0, 0, frame.get_height(), 0.5, 0.5) * float3(frag_in.texcoord, 1.0));
+    auto xy = floor(pixel_position);
+    auto xyi = uint2(xy);
+    auto s0 = exp(frame.read(xyi + uint2(0, 1)).rgb);
+    auto s1 = exp(frame.read(xyi + uint2(1, 1)).rgb);
+    auto s2 = exp(frame.read(xyi + uint2(1, 0)).rgb);
+    auto s3 = exp(frame.read(xyi + uint2(0, 0)).rgb);
+    
+    auto offset = pixel_position - xy;
+    
+    auto s3s0 = transpose(float2x3(s3, s0));
+    auto s2s1 = transpose(float2x3(s2, s1));
 
-    auto s3s0 = float4x2(0, 1, 0, 0, 0, 0, 1, 0) * samples;
-    auto s2s1 = float4x2(0, 0, 0, 1, 1, 0, 0, 0) * samples;
-    
     auto across = interp(s3s0, s2s1, offset.x);
 
     auto s3s2i = float2(1, 0) * across;
