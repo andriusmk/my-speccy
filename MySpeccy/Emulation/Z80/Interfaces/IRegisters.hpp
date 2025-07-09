@@ -21,11 +21,11 @@
 namespace Z80 {
 
 enum class Reg8 : std::uint8_t {
-    C = 0, B, E, D, L, H, Flags, A, IXL, IXH, R, I, IYL, IYH, Size
+    C = 0, B, E, D, L, H, Flags, A, IXL, IXH, R, I, IYL, IYH, Z, W, Size
 };
 
 enum class Reg16 : std::uint8_t {
-    BC = 0, DE, HL, AF, IX, IR, IY, PC, SP, BC_, DE_, HL_, AF_, WZ, Misc, Size
+    BC = 0, DE, HL, AF, IX, IR, IY, WZ, PC, SP, BC_, DE_, HL_, AF_, Misc, Size
 };
 
 enum class Flag : std::uint8_t {
@@ -63,6 +63,7 @@ struct RegisterShortcuts
     static constexpr auto IR = Reg16::IR;
     static constexpr auto IX = Reg16::IX;
     static constexpr auto IY = Reg16::IY;
+    static constexpr auto WZ = Reg16::WZ;
     static constexpr auto PC = Reg16::PC;
     static constexpr auto SP = Reg16::SP;
     
