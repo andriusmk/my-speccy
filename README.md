@@ -8,7 +8,7 @@ in a very early stage. There's no CPU emulation yet.
 
 ## Status
 
-* Video works, but it looks like there's a minor bug in the shader.
+* Video works.
 * Keyboard works.
 * Sound output is available, but it's not connected to IO yet.
 * CPU 5% done.
