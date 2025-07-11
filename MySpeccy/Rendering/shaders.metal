@@ -29,8 +29,8 @@ struct VertexOutput {
     float2 texcoord;
 };
 
-//constexpr sampler smp(filter::linear);
-constexpr sampler smp(filter::nearest);
+constexpr sampler smp(filter::linear);
+//constexpr sampler smp(filter::nearest);
 
 vertex VertexOutput vertex_func(constant float2x2 &viewTransform [[buffer(1)]], VertexInput v_in [[stage_in]])
 {
@@ -48,6 +48,7 @@ T interp(T s0, T s1, float x)
 
 fragment float4 fragment_func(VertexOutput frag_in [[stage_in]], texture2d<float, access::sample> frame [[texture(0)]])
 {
+//    return frame.sample(smp, frag_in.texcoord);
     auto pixel_position = float2(frag_in.texcoord.x * (frame.get_width() - 1), frag_in.texcoord.y * (frame.get_height() - 1));
     
     auto xy = floor(pixel_position);
@@ -67,5 +68,9 @@ fragment float4 fragment_func(VertexOutput frag_in [[stage_in]], texture2d<float
     auto s3s2i = float2(1, 0) * across;
     auto s0s1i = float2(0, 1) * across;
     
-    return float4(log(interp(s3s2i, s0s1i, offset.y)), 1.0);
+    auto oneminusoffsety = 1.0 - offset.y;
+    auto s3s2ig = s3s2i * exp(-offset.y * offset.y * 3);
+    auto s0s1ig = s0s1i * exp(-oneminusoffsety * oneminusoffsety * 3);
+
+    return float4(log(s3s2ig + s0s1ig), 1.0);
 }
