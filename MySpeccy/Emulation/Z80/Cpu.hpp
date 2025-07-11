@@ -30,8 +30,14 @@ class Cpu
 {
 public:
     Cpu(IBus& memory, IBus& io, CpuState* const extState = nullptr)
-      : memory{memory}, io{io}, state(extState != nullptr ? *extState : internalState)
+      : memory{memory}, io{io}, state(extState != nullptr ? *extState : internalState),
+    test{0x4000}
     {
+        testFun();
+        for (int i = 0; i < 192 * 32 + 24 * 32; i++)
+        {
+            writeRandomByte();
+        }
     }
     
     Cpu(const Cpu&) = delete;
@@ -52,15 +58,22 @@ public:
             memory.write(i, 0x38);
         }
         
-        test = 0x4000;
+        // test = 0x4000;
     }
     
     int executeOne()
     {
         return 4;
     }
+
+    
     
     void setInterrupt()
+    {
+        
+    }
+    
+    void writeRandomByte()
     {
         memory.write(test, std::rand());
         const int key = io.read(0xFE);
