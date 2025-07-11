@@ -162,7 +162,7 @@ private:
         const int attrs = memory.read(attributeAddr);
         
         const Pixel inkPaper[] {
-            colors[((attrs >> 3) & 7)],
+            colors[((attrs >> 3) & 0x0F)],
             colors[(attrs & 7) | ((attrs & 0x40) >> 3)]
         };
         
