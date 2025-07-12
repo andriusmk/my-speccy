@@ -13,6 +13,14 @@ in a very early stage. There's no CPU emulation yet.
 * Sound output is available, but it's not connected to IO yet.
 * CPU 5% done.
 
+## Teaser
+
+It's my older emulator that uses a third-party Z80 emulation library
+that I can't distribute. And it's incomplete. Fortunately it's sufficient
+to run Bomb Jack.
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/JO_Eje0N1tg/0.jpg)](https://www.youtube.com/watch?v=JO_Eje0N1tg)
+
 ## Prerequisites
 
 * MacOS with Xcode installed;
