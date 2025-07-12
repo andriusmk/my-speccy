@@ -38,6 +38,14 @@ public:
         {
             writeRandomByte();
         }
+//        for (int i = 0; i < 8; i++)
+//        {
+//            memory.write(0x4000 + 192 * 32 + i, i << 3);
+//        }
+//        for (int i = 0; i < 8; i++)
+//        {
+//            memory.write(0x4000 + 192 * 32 + 32 + i, 0x40 | (i << 3));
+//        }
     }
     
     Cpu(const Cpu&) = delete;

@@ -18,6 +18,9 @@ import MetalKit
 
 class Renderer: NSObject, MTKViewDelegate {
     
+    let outputPixelFormat = MTLPixelFormat.bgra8Unorm_srgb
+    let texturePixelFormat = MTLPixelFormat.bgra8Unorm
+    
     let commandQueue: MTLCommandQueue
     let device: MTLDevice
     let pipelineState: MTLRenderPipelineState
@@ -57,7 +60,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         device = MTLCreateSystemDefaultDevice()!
         view.device = device
-        view.colorPixelFormat = .bgra8Unorm
+        view.colorPixelFormat = outputPixelFormat
         view.preferredFramesPerSecond = 50
         view.isPaused = true
         view.enableSetNeedsDisplay = true
@@ -76,7 +79,7 @@ class Renderer: NSObject, MTKViewDelegate {
         pipelineDescriptor.vertexDescriptor!.attributes[1].format = .float2
         pipelineDescriptor.vertexDescriptor!.attributes[1].offset = 8
         pipelineDescriptor.vertexDescriptor!.layouts[0].stride = 16
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[0].pixelFormat = outputPixelFormat
 
         pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineDescriptor)
 
@@ -97,7 +100,7 @@ class Renderer: NSObject, MTKViewDelegate {
         encoder.endEncoding()
         commandBuffer.commit()
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: view.colorPixelFormat, width: width, height: height, mipmapped: false)
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: texturePixelFormat, width: width, height: height, mipmapped: false)
         
         textureDescriptor.storageMode = .managed
         textureDescriptor.usage = .shaderRead
@@ -149,7 +152,7 @@ class Renderer: NSObject, MTKViewDelegate {
         task.viewTransform.didModifyRange(0..<task.viewTransform.length)
 
         renderPassDescriptor.colorAttachments[0].loadAction = .dontCare
-        
+
         if  let drawable = view.currentDrawable,
             let commandBuffer = commandQueue.makeCommandBuffer() {
                 if let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
