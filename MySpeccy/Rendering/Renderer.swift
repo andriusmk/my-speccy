@@ -19,7 +19,7 @@ import MetalKit
 class Renderer: NSObject, MTKViewDelegate {
     
     let outputPixelFormat = MTLPixelFormat.bgra8Unorm_srgb
-    let texturePixelFormat = MTLPixelFormat.bgra8Unorm
+    let texturePixelFormat = MTLPixelFormat.bgr5A1Unorm
     
     let commandQueue: MTLCommandQueue
     let device: MTLDevice

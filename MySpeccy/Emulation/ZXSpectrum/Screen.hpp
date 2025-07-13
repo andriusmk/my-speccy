@@ -27,10 +27,10 @@
 class Screen : public IBorderCtrl
 {
 public:
-    using Pixel = uint32_t;
+    using Pixel = uint16_t;
     
-    static constexpr int colorBits{8};
-    static constexpr int nonBrightLevelLinear{0xAD};
+    static constexpr int colorBits{5};
+    static constexpr int nonBrightLevelLinear{0x15};
     
     static constexpr int colorMask{(1 << colorBits) - 1};
     static constexpr int nonBrightMask{
