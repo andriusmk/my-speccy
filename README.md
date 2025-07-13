@@ -34,7 +34,8 @@ brew install googletest
 
 ## Installation
 
-Just load it in Xcode and run.
+Just load it in Xcode and run. Just be warned that you'll not see anything interesting
+because the "brain" is still missing.
 
 ## Release History
 
