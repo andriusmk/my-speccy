@@ -46,12 +46,12 @@ class ViewController: NSViewController {
         NSEvent.addLocalMonitorForEvents(matching: .keyUp) { self.keyUp(with: $0) }
         NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { self.keyFlagsChanged(with: $0); return $0 }
         
-        guard let url = Bundle.main.url(forResource: "48k-2", withExtension: "rom"),
-              let data = try? Data(contentsOf: url) else { return }
-        
-        data.withUnsafeBytes {
-            self.machine.loadROM($0.bindMemory(to: UInt8.self).baseAddress!, UInt32($0.count))
-        }
+//        guard let url = Bundle.main.url(forResource: "48k-2", withExtension: "rom"),
+//              let data = try? Data(contentsOf: url) else { return }
+//        
+//        data.withUnsafeBytes {
+//            self.machine.loadROM($0.bindMemory(to: UInt8.self).baseAddress!, UInt32($0.count))
+//        }
       
         let frameInfo = machine.frameInfo();
 
