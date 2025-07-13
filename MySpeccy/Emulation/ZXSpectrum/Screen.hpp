@@ -171,16 +171,13 @@ private:
         int pixs = memory.read(pixelAddr);
         const int attrs = memory.read(attributeAddr);
         
-//        const Pixel inkPaper[] {
-//            colors[((attrs >> 3) & 0x0F)],
-//            colors[(attrs & 7) | ((attrs & 0x40) >> 3)]
-//        };
-        
         const int flashState = flash & (attrs >> 7) & 1;
+        
+        pixs = pixs ^ (0xFF * flashState);
         
         for (int i = 0; i < 8; i++)
         {
-            buffer[octetBase + i] = makePixel(attrs, ((pixs & 0x80) >> 7) ^ flashState);
+            buffer[octetBase + i] = makePixel(attrs, ((pixs & 0x80) >> 7));
             pixs <<= 1;
         }
     }
