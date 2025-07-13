@@ -16,6 +16,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
 #include <array>
 
 #include "Interfaces/IBus.hpp"
@@ -27,6 +28,15 @@ class Screen : public IBorderCtrl
 {
 public:
     using Pixel = uint32_t;
+    
+    static constexpr int colorBits{8};
+    static constexpr int nonBrightLevelLinear{0xAD};
+    
+    static constexpr int colorMask{(1 << colorBits) - 1};
+    static constexpr int nonBrightMask{
+        (nonBrightLevelLinear) |
+        (nonBrightLevelLinear << (colorBits)) |
+        (nonBrightLevelLinear << (colorBits * 2)) };
     
     static constexpr int lineBlankCycles{48};
     static constexpr int totalLineCycles{224};
@@ -140,7 +150,7 @@ private:
             lineOctet < borderWidth / 8 ||
             lineOctet >= borderWidth / 8 + screenWidth / 8)
         {
-            const Pixel borderColor = colors[border];
+            const Pixel borderColor = makeColor(border) & nonBrightMask;
             for (int i = 0; i < 8; i++)
             {
                 buffer[octetBase + i] = borderColor;
@@ -161,18 +171,38 @@ private:
         int pixs = memory.read(pixelAddr);
         const int attrs = memory.read(attributeAddr);
         
-        const Pixel inkPaper[] {
-            colors[((attrs >> 3) & 0x0F)],
-            colors[(attrs & 7) | ((attrs & 0x40) >> 3)]
-        };
+//        const Pixel inkPaper[] {
+//            colors[((attrs >> 3) & 0x0F)],
+//            colors[(attrs & 7) | ((attrs & 0x40) >> 3)]
+//        };
         
         const int flashState = flash & (attrs >> 7) & 1;
         
         for (int i = 0; i < 8; i++)
         {
-            buffer[octetBase + i] = inkPaper[((pixs & 0x80) != 0) ^ flashState];
+            buffer[octetBase + i] = makePixel(attrs, ((pixs & 0x80) >> 7) ^ flashState);
             pixs <<= 1;
         }
+    }
+    
+    static Pixel makeColor(int index)
+    {
+        Pixel result = (index & 1) * colorMask;
+        result |= ((index & 2) * colorMask) << (colorBits * 2 - 1);
+        result |= ((index & 4) * colorMask) << (colorBits - 2);
+
+        return result;
+    }
+    
+    static Pixel makePixel(int attr, int value)
+    {
+        Pixel color = makeColor(attr & 7) * value;
+        color |= makeColor((attr >> 3) & 7) * (value ^ 1);
+        
+        Pixel result = color & nonBrightMask;
+        result |= color * ((attr & 0x40) >> 6);
+        
+        return result;
     }
     
     std::array<Pixel, frameWidth * frameHeight> buffer;
@@ -185,22 +215,4 @@ private:
     
     static constexpr int attributeBase = 3 * 8 * 8 * 32;
     
-    static constexpr std::array<Pixel, 16> colors {
-        0x000000,
-        0x0000AD,
-        0xAD0000,
-        0xAD00AD,
-        0x00AD00,
-        0x00ADAD,
-        0xADAD00,
-        0xADADAD,
-        0x000000,
-        0x0000FF,
-        0xFF0000,
-        0xFF00FF,
-        0x00FF00,
-        0x00FFFF,
-        0xFFFF00,
-        0xFFFFFF
-    };
 };
