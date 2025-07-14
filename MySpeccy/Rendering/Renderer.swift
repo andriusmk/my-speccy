@@ -112,12 +112,9 @@ class Renderer: NSObject, MTKViewDelegate {
     
     func updateImage(bytes: UnsafeMutableRawPointer) {
         
-        guard let task = availableTasks.popLast() else { return }
+        guard let task = taskToDraw ?? availableTasks.popLast() else { return }
         task.texture.replace(region: MTLRegion(origin: MTLOriginMake(0, 0, 0), size: MTLSize(width: width, height: height, depth: 1)), mipmapLevel: 0, withBytes: bytes, bytesPerRow: bytesPerRow)
         
-        if let ttd = taskToDraw {
-            availableTasks.append(ttd)
-        }
         taskToDraw = task
         view.setNeedsDisplay(view.frame)
     }
@@ -139,8 +136,7 @@ class Renderer: NSObject, MTKViewDelegate {
     
     func draw(in view: MTKView) {
 
-        guard let task = taskToDraw,
-              let renderPassDescriptor = view.currentRenderPassDescriptor
+        guard let task = taskToDraw
         else {
             return
         }
@@ -151,27 +147,28 @@ class Renderer: NSObject, MTKViewDelegate {
         }
         task.viewTransform.didModifyRange(0..<task.viewTransform.length)
 
-        renderPassDescriptor.colorAttachments[0].loadAction = .dontCare
-
-        if  let drawable = view.currentDrawable,
-            let commandBuffer = commandQueue.makeCommandBuffer() {
-                if let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-                    taskToDraw = nil
-
-                    encoder.setRenderPipelineState(pipelineState)
-                    encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-                    encoder.setVertexBuffer(task.viewTransform, offset: 0, index: 1)
-                    encoder.setFragmentTexture(task.texture, index: 0)
-                    encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-                    encoder.endEncoding()
-                }
-
-                commandBuffer.present(drawable)
-
-                commandBuffer.addCompletedHandler { _ in
-                    self.availableTasks.append(task)
-                }
-                commandBuffer.commit()
+        guard let drawable = view.currentDrawable,
+              let commandBuffer = commandQueue.makeCommandBuffer(),
+              let renderPassDescriptor = view.currentRenderPassDescriptor
+        else {
+            return
         }
+        
+        renderPassDescriptor.colorAttachments[0].loadAction = .dontCare
+            
+        if let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+            taskToDraw = nil
+
+                encoder.setRenderPipelineState(pipelineState)
+                encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+                encoder.setVertexBuffer(task.viewTransform, offset: 0, index: 1)
+                encoder.setFragmentTexture(task.texture, index: 0)
+                encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+                    encoder.endEncoding()
+        }
+
+        commandBuffer.present(drawable)
+        commandBuffer.addCompletedHandler { _ in self.availableTasks.append(task) }
+        commandBuffer.commit()
     }
 }
