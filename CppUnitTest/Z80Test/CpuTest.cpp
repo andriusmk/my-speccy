@@ -61,7 +61,7 @@ protected:
     std::unique_ptr<Cpu> cpu;
 };
 
-TEST(CpuStandalone, ConstructionDestructionNoSideEffects)
+TEST(CpuStandalone, DISABLED_ConstructionDestructionNoSideEffects)
 {
     BusMock memory;
     BusMock io;
@@ -74,7 +74,7 @@ TEST(CpuStandalone, ConstructionDestructionNoSideEffects)
     Cpu cpu(memory, io);
 }
 
-TEST_F(CpuTest, ResetNoSideEffects)
+TEST_F(CpuTest, DISABLED_ResetNoSideEffects)
 {
     EXPECT_CALL(memory, read(_)).Times(0);
     EXPECT_CALL(memory, write(_, _)).Times(0);

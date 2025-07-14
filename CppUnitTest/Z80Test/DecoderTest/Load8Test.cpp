@@ -445,10 +445,8 @@ TEST_F(DecoderTest, LoadRfromA)
     EXPECT_EQ(decoder.decodeOne(), 9);
 }
 
-TEST_F(DecoderTest, LoadAfromI)
+TEST_P(DecoderFlagsTest, LoadAFromI)
 {
-    setInitialFlags(Flag::Z, Flag::X, Flag::H, Flag::N, Flag::C);
-    
     EXPECT_CALL(prim, fetchM1())
         .WillOnce(Return(0xED))
         .WillOnce(Return(0x57));
@@ -458,13 +456,14 @@ TEST_F(DecoderTest, LoadAfromI)
     EXPECT_CALL(prim, getIff2()).WillOnce(Return(1));
     
     EXPECT_EQ(decoder.decodeOne(), 9);
-    verifyFlags(Flag::S, Flag::Y, Flag::P, Flag::C);
+    
+    verifySet(Flag::S, Flag::P, Flag::Y);
+    verifyCleared(Flag::N, Flag::X, Flag::H, Flag::Z);
+    verifyUnchanged(Flag::C);
 }
 
-TEST_F(DecoderTest, LoadAfromI2)
+TEST_P(DecoderFlagsTest, LoadAfromI2)
 {
-    setInitialFlags(Flag::Z, Flag::Y, Flag::H, Flag::N);
-    
     EXPECT_CALL(prim, fetchM1())
         .WillOnce(Return(0xED))
         .WillOnce(Return(0x57));
@@ -474,13 +473,14 @@ TEST_F(DecoderTest, LoadAfromI2)
     EXPECT_CALL(prim, getIff2()).WillOnce(Return(0));
     
     EXPECT_EQ(decoder.decodeOne(), 9);
-    verifyFlags(Flag::X);
+    
+    verifySet(Flag::X);
+    verifyCleared(Flag::N, Flag::P, Flag::H, Flag::Y, Flag::Z, Flag::S);
+    verifyUnchanged(Flag::C);
 }
 
-TEST_F(DecoderTest, LoadAfromR)
+TEST_P(DecoderFlagsTest, LoadAfromR)
 {
-    setInitialFlags(Flag::Z, Flag::Y, Flag::H, Flag::N);
-    
     EXPECT_CALL(prim, fetchM1())
         .WillOnce(Return(0xED))
         .WillOnce(Return(0x5F));
@@ -490,7 +490,10 @@ TEST_F(DecoderTest, LoadAfromR)
     EXPECT_CALL(prim, getIff2()).WillOnce(Return(1));
     
     EXPECT_EQ(decoder.decodeOne(), 9);
-    verifyFlags(Flag::X, Flag::P);
+    
+    verifySet(Flag::P, Flag::X);
+    verifyCleared(Flag::N, Flag::H, Flag::Y, Flag::Z, Flag::S);
+    verifyUnchanged(Flag::C);
 }
 
 }

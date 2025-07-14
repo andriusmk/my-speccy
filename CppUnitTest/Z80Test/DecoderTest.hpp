@@ -28,20 +28,11 @@ namespace Z80 {
 using ::testing::_;
 using ::testing::Return;
 using ::testing::SaveArg;
+using ::testing::Values;
 
 class DecoderTest : public ::testing::Test
 {
 public:
-    void SetUp() final override
-    {
-        
-    }
-    
-    void TearDown() final override
-    {
-        
-    }
-    
     template<typename... Args>
     void setInitialFlags(Args... args)
     {
@@ -64,5 +55,42 @@ public:
     Decoder decoder{parts};
     uint8_t flags;
 };
+
+class DecoderFlagsTest : public DecoderTest,
+                         public ::testing::WithParamInterface<uint8_t>
+{
+public:
+    void SetUp() final override
+    {
+        flags = GetParam();
+        EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(flags));
+        EXPECT_CALL(regs, set(Reg8::Flags, _)).WillOnce(SaveArg<1>(&finalFlags));
+    }
+    
+    template<typename... Args>
+    void verifySet(Args... args)
+    {
+        uint8_t testFlags = Flags::combine(args...);
+        EXPECT_EQ(finalFlags & testFlags, testFlags);
+    }
+    
+    template<typename... Args>
+    void verifyCleared(Args... args)
+    {
+        uint8_t testFlags = Flags::combine(args...);
+        EXPECT_EQ(finalFlags & testFlags, 0);
+    }
+    
+    template<typename... Args>
+    void verifyUnchanged(Args... args)
+    {
+        uint8_t testFlags = Flags::combine(args...);
+        EXPECT_EQ(finalFlags & testFlags, flags & testFlags);
+    }
+
+    uint8_t finalFlags;
+};
+
+INSTANTIATE_TEST_SUITE_P(, DecoderFlagsTest, Values(0x00, 0xFF));
 
 }
