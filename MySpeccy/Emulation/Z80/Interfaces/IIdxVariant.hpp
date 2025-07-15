@@ -32,7 +32,7 @@ public:
 
     virtual void load(Reg8 dst, Reg8 src) = 0;
     virtual void loadN(Reg8 dst) = 0;
-
+    virtual void loadNN() = 0;
 };
 
 }

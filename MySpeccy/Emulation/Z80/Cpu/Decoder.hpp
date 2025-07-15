@@ -53,6 +53,14 @@ private:
             case 0x00:
                 return 4 + tstates;
                 
+            case 0x01:
+            case 0x11:
+            case 0x31: {
+                const auto value = parts.prim.fetch16();
+                parts.regs.set(ddRegs[(opcode >> 4) & 3].value(), value);
+                return 10 + tstates;
+            }
+
             case 0x02:
                 parts.prim.setIndirect(BC, parts.regs.get(Reg8::A));
                 return 7 + tstates;
@@ -92,6 +100,10 @@ private:
     {
         switch (opcode)
         {
+            case 0x21:
+                idx.loadNN();
+                return idx.takeTstates() + tstates;
+                
             case 0x36:
                 idx.indirectToHLfromN();
                 return idx.takeTstates() + tstates;
@@ -214,8 +226,11 @@ private:
     static constexpr auto ld_r_hl = OpMask{ 0b01000110, 0b11000111 };
     static constexpr auto ld_r_n = OpMask{ 0b00000110, 0b11000111 };
 
-    static constexpr std::array<std::optional<Reg8>, 8> regTab{
+    static constexpr std::array<std::optional<Reg8>, 8> regTab {
         B, C, D, E, H, L, std::nullopt, A
+    };
+    static constexpr std::array<std::optional<Reg16>, 4> ddRegs {
+        BC, DE, std::nullopt, SP
     };
     
     Parts& parts;

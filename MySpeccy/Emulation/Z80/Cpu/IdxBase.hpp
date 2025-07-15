@@ -47,6 +47,12 @@ public:
         setReg(dst, value);
         addTstates(7);
     }
+    
+    void loadNN() final override
+    {
+        setIdx(parts.prim.fetch16());
+        addTstates(10);
+    }
 
 protected:
     void addTstates(int value)
@@ -57,6 +63,8 @@ protected:
 private:
     virtual int getReg(Reg8) = 0;
     virtual void setReg(Reg8, int) = 0;
+    // virtual int getIdx() = 0;
+    virtual void setIdx(int) = 0;
 
 protected:
     Parts& parts;

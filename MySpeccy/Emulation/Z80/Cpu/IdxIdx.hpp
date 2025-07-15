@@ -94,6 +94,11 @@ private:
                 break;
         }
     }
+    
+    void setIdx(int value) final override
+    {
+        parts.regs.set(idxReg, value);
+    }
 
     Reg16 idxReg;
 };
