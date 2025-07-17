@@ -27,6 +27,8 @@ public:
     virtual int fetchM1() = 0;
     virtual int fetch8() = 0;
     virtual int fetch16() = 0;
+    virtual int read16(int addr) = 0;
+    virtual void write16(int addr, int value) = 0;
     virtual void halt() = 0;
     virtual void unhalt() = 0;
     virtual void setIndirect(const Reg16, int) = 0;

@@ -57,7 +57,7 @@ private:
             case 0x11:
             case 0x31: {
                 const auto value = parts.prim.fetch16();
-                parts.regs.set(ddRegs[(opcode >> 4) & 3].value(), value);
+                parts.regs.set(ddRegs[(opcode >> 4) & 3], value);
                 return 10 + tstates;
             }
 
@@ -104,6 +104,16 @@ private:
                 idx.loadNN();
                 return idx.takeTstates() + tstates;
                 
+            case 0x22:
+                idx.indirectNNfromHL();
+                return idx.takeTstates() + tstates;
+                
+            case 0x2A:
+                idx.indirectNNtoHL();
+                return idx.takeTstates() + tstates;
+//                parts.regs.set(HL, parts.prim.read16(parts.prim.fetch16()));
+//                return 16 + tstates;
+
             case 0x36:
                 idx.indirectToHLfromN();
                 return idx.takeTstates() + tstates;
@@ -174,6 +184,20 @@ private:
                 parts.regs.set(I, parts.regs.get(A));
                 return 5 + tstates;
                 
+            case 0x43:
+            case 0x53:
+            case 0x63:
+            case 0x73:
+                parts.prim.write16(parts.prim.fetch16(), parts.regs.get(ddRegs[(opcode >> 4) & 3]));
+                return 16 + tstates;
+
+            case 0x4B:
+            case 0x5B:
+            case 0x6B:
+            case 0x7B:
+                parts.regs.set(ddRegs[(opcode >> 4) & 3], parts.prim.read16(parts.prim.fetch16()));
+                return 16 + tstates;
+                
             case 0x4F:
                 parts.regs.set(R, parts.regs.get(A));
                 return 5 + tstates;
@@ -229,8 +253,8 @@ private:
     static constexpr std::array<std::optional<Reg8>, 8> regTab {
         B, C, D, E, H, L, std::nullopt, A
     };
-    static constexpr std::array<std::optional<Reg16>, 4> ddRegs {
-        BC, DE, std::nullopt, SP
+    static constexpr std::array<Reg16, 4> ddRegs {
+        BC, DE, HL, SP
     };
     
     Parts& parts;

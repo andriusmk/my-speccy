@@ -65,15 +65,16 @@ private:
         parts.regs.set(reg, value);
     }
     
-//    int getIdx() final override
-//    {
-//        return parts.regs.get(Reg16::HL);
-//    }
+    int getIdx() final override
+    {
+        return parts.regs.get(Reg16::HL);
+    }
     
     void setIdx(int value) final override
     {
         parts.regs.set(Reg16::HL, value);
     }
+    
 };
 
 }

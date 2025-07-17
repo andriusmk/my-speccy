@@ -54,6 +54,18 @@ public:
         addTstates(10);
     }
 
+    void indirectNNfromHL() final override
+    {
+        parts.prim.write16(parts.prim.fetch16(), getIdx());
+        addTstates(16);
+    }
+    
+    void indirectNNtoHL() final override
+    {
+        setIdx(parts.prim.read16(parts.prim.fetch16()));
+        addTstates(16);
+    }
+
 protected:
     void addTstates(int value)
     {
@@ -63,7 +75,7 @@ protected:
 private:
     virtual int getReg(Reg8) = 0;
     virtual void setReg(Reg8, int) = 0;
-    // virtual int getIdx() = 0;
+    virtual int getIdx() = 0;
     virtual void setIdx(int) = 0;
 
 protected:

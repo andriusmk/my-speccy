@@ -27,6 +27,8 @@ public:
     MOCK_METHOD(int, fetchM1, (), (final, override));
     MOCK_METHOD(int, fetch8, (), (final, override));
     MOCK_METHOD(int, fetch16, (), (final, override));
+    MOCK_METHOD(int, read16, (int), (final, override));
+    MOCK_METHOD(void, write16, (int, int), (final, override));
     MOCK_METHOD(void, halt, (), (final, override));
     MOCK_METHOD(void, unhalt, (), (final, override));
     MOCK_METHOD(void, setIndirect, (const Reg16, int), (final, override));

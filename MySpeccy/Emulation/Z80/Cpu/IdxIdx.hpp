@@ -95,6 +95,11 @@ private:
         }
     }
     
+    int getIdx() final override
+    {
+        return parts.regs.get(idxReg);
+    }
+
     void setIdx(int value) final override
     {
         parts.regs.set(idxReg, value);

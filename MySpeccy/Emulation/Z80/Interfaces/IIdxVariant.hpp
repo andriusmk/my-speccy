@@ -29,6 +29,9 @@ public:
     virtual int indirectFromHL() = 0;
     virtual void indirectToHL(int) = 0;
     virtual void indirectToHLfromN() = 0;
+    
+    virtual void indirectNNtoHL() = 0;
+    virtual void indirectNNfromHL() = 0;
 
     virtual void load(Reg8 dst, Reg8 src) = 0;
     virtual void loadN(Reg8 dst) = 0;
