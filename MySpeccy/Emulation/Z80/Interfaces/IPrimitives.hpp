@@ -40,5 +40,7 @@ public:
     virtual int getIndexed(const Reg16) = 0;
     virtual int getIndexed(const Reg16, int d) = 0;
     virtual int getIff2() const = 0;
+    virtual void push(Reg16) = 0;
+    virtual void pop(Reg16) = 0;
 };
 }

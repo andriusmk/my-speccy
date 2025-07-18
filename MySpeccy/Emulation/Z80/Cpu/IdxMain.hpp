@@ -53,6 +53,11 @@ public:
         indirectToHL(n);
         addTstates(10);
     }
+    
+    Reg16 get() const final override
+    {
+        return Reg16::HL;
+    }
 
 private:
     int getReg(Reg8 reg) final override

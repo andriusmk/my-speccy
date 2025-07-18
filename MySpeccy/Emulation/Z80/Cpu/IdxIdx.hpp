@@ -60,6 +60,11 @@ public:
         parts.prim.setIndexed(idxReg, d, n);
         addTstates(15);
     }
+    
+    Reg16 get() const final override
+    {
+        return idxReg;
+    }
 
 private:
     int getReg(Reg8 reg) final override

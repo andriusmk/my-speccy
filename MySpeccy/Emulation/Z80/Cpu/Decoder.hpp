@@ -89,6 +89,18 @@ private:
                 parts.prim.halt();
                 return 4 + tstates;
                 
+            case 0xC1:
+            case 0xD1:
+            case 0xF1:
+                parts.prim.pop(qqRegs[(opcode >> 4) & 3]);
+                return 10 + tstates;
+
+            case 0xC5:
+            case 0xD5:
+            case 0xF5:
+                parts.prim.push(qqRegs[(opcode >> 4) & 3]);
+                return 11 + tstates;
+                
             case 0xED:
                 return decodeED(4 + tstates);
         }
@@ -111,12 +123,11 @@ private:
             case 0x2A:
                 idx.indirectNNtoHL();
                 return idx.takeTstates() + tstates;
-//                parts.regs.set(HL, parts.prim.read16(parts.prim.fetch16()));
-//                return 16 + tstates;
 
             case 0x36:
                 idx.indirectToHLfromN();
                 return idx.takeTstates() + tstates;
+                
                 
             case 0xCB:
                 return decodeCB(tstates + 4, idx);
@@ -126,6 +137,18 @@ private:
                 const auto newOpcode = parts.prim.fetchM1();
                 return decodeCommon(newOpcode, tstates + 4, idxIdx);
             }
+                
+            case 0xE1:
+                parts.prim.pop(idx.get());
+                return 10 + tstates;
+
+            case 0xE5:
+                parts.prim.push(idx.get());
+                return 11 + tstates;
+                
+            case 0xF9:
+                parts.regs.set(Reg16::SP, idx.getIdx());
+                return 6 + tstates;
                 
             case 0xFD: {
                 idxIdx = IY;
@@ -256,7 +279,10 @@ private:
     static constexpr std::array<Reg16, 4> ddRegs {
         BC, DE, HL, SP
     };
-    
+    static constexpr std::array<Reg16, 4> qqRegs {
+        BC, DE, HL, AF
+    };
+
     Parts& parts;
     IdxMain idxMain;
     IdxIdx idxIdx;

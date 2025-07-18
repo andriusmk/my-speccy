@@ -75,8 +75,6 @@ protected:
 private:
     virtual int getReg(Reg8) = 0;
     virtual void setReg(Reg8, int) = 0;
-    virtual int getIdx() = 0;
-    virtual void setIdx(int) = 0;
 
 protected:
     Parts& parts;

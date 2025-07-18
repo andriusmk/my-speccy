@@ -35,6 +35,13 @@ constexpr std::array<DDReg, 4> ddRegs {
     std::make_tuple(Reg16::SP, 0b00110000)
 };
 
+constexpr std::array<DDReg, 4> qqRegs {
+    std::make_tuple(Reg16::BC, 0b00000000),
+    std::make_tuple(Reg16::DE, 0b00010000),
+    std::make_tuple(Reg16::HL, 0b00100000),
+    std::make_tuple(Reg16::AF, 0b00110000)
+};
+
 constexpr std::array<DDReg, 2> idxRegs {
     std::make_tuple(Reg16::IX, 0xDD),
     std::make_tuple(Reg16::IY, 0xFD)
@@ -83,6 +90,31 @@ class TwoValues16RegTest : public DecoderTest, public ::testing::WithParamInterf
 };
 
 INSTANTIATE_TEST_SUITE_P(, TwoValues16RegTest, Combine(ValuesIn(values16), ValuesIn(values16), ValuesIn(ddRegs)));
+
+class Values16Test : public DecoderTest, public ::testing::WithParamInterface<uint16_t>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(, Values16Test, ValuesIn(values16));
+
+class Values16IdxTest : public DecoderTest,
+public ::testing::WithParamInterface<std::tuple<uint16_t, DDReg>>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(, Values16IdxTest, Combine(ValuesIn(values16), ValuesIn(idxRegs)));
+
+class QQRegTest : public DecoderTest, public ::testing::WithParamInterface<DDReg>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(, QQRegTest, ValuesIn(qqRegs));
+
+class QQIdxRegTest : public DecoderTest, public ::testing::WithParamInterface<DDReg>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(, QQIdxRegTest, ValuesIn(idxRegs));
 
 TEST_P(DDRegisterTest, LoadImmediate)
 {
@@ -201,4 +233,78 @@ TEST_P(TwoValues16RegTest, IndirectNNtoDDReg)
     EXPECT_EQ(decoder.decodeOne(), 20);
 }
 
+TEST_P(Values16Test, LoadSPfromHL)
+{
+    auto value = GetParam();
+    
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xF9));
+    
+    EXPECT_CALL(regs, get(Reg16::HL)).WillOnce(Return(value));
+    EXPECT_CALL(regs, set(Reg16::SP, value));
+    
+    EXPECT_EQ(decoder.decodeOne(), 6);
+}
+
+TEST_P(Values16IdxTest, LoadSPfromIdx)
+{
+    auto [value, idx] = GetParam();
+    auto [reg, prefix] = idx;
+    
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(prefix))
+        .WillOnce(Return(0xF9));
+    
+    EXPECT_CALL(regs, get(reg)).WillOnce(Return(value));
+    EXPECT_CALL(regs, set(Reg16::SP, value));
+    
+    EXPECT_EQ(decoder.decodeOne(), 10);
+}
+
+TEST_P(QQRegTest, Push)
+{
+    auto [reg, idx] = GetParam();
+    
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xC5 | idx));
+    
+    EXPECT_CALL(prim, push(reg));
+    
+    EXPECT_EQ(decoder.decodeOne(), 11);
+}
+
+TEST_P(QQIdxRegTest, Push)
+{
+    auto [reg, prefix] = GetParam();
+    
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(prefix))
+        .WillOnce(Return(0xE5));
+    
+    EXPECT_CALL(prim, push(reg));
+    
+    EXPECT_EQ(decoder.decodeOne(), 15);
+}
+
+TEST_P(QQRegTest, Pop)
+{
+    auto [reg, idx] = GetParam();
+    
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xC1 | idx));
+    
+    EXPECT_CALL(prim, pop(reg));
+    
+    EXPECT_EQ(decoder.decodeOne(), 10);
+}
+
+TEST_P(QQIdxRegTest, Pop)
+{
+    auto [reg, prefix] = GetParam();
+    
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(prefix))
+        .WillOnce(Return(0xE1));
+    
+    EXPECT_CALL(prim, pop(reg));
+    
+    EXPECT_EQ(decoder.decodeOne(), 14);
+}
 }
