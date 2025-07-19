@@ -12,6 +12,7 @@ in a very early stage. There's no CPU emulation yet.
 * Keyboard works.
 * Sound output is available, but it's not connected to IO yet.
 * CPU 5% done.
+* The first milestone is planned on September 30, 2025.
 
 ## Teaser
 
