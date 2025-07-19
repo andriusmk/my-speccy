@@ -73,4 +73,136 @@ TEST_P(Values16IdxTest, ExSP)
     EXPECT_EQ(decoder.decodeOne(), 23);
 }
 
+TEST_F(DecoderTest, LDI)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xA0));
+    
+    EXPECT_CALL(prim, blockLD(1, 0)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, LDIR)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB0));
+    
+    EXPECT_CALL(prim, blockLD(1, -2)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, LDIR2)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB0));
+    
+    EXPECT_CALL(prim, blockLD(1, -2)).WillOnce(Return(17));
+    
+    EXPECT_EQ(decoder.decodeOne(), 21);
+}
+
+TEST_F(DecoderTest, LDD)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xA8));
+    
+    EXPECT_CALL(prim, blockLD(-1, 0)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, LDDR)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB8));
+    
+    EXPECT_CALL(prim, blockLD(-1, -2)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, LDDR2)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB8));
+    
+    EXPECT_CALL(prim, blockLD(-1, -2)).WillOnce(Return(17));
+    
+    EXPECT_EQ(decoder.decodeOne(), 21);
+}
+
+TEST_F(DecoderTest, CPI)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xA1));
+    
+    EXPECT_CALL(prim, blockCP(1, 0)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, CPIR)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB1));
+    
+    EXPECT_CALL(prim, blockCP(1, -2)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, CPIR2)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB1));
+    
+    EXPECT_CALL(prim, blockCP(1, -2)).WillOnce(Return(17));
+    
+    EXPECT_EQ(decoder.decodeOne(), 21);
+}
+
+TEST_F(DecoderTest, CPD)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xA9));
+    
+    EXPECT_CALL(prim, blockCP(-1, 0)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, CPDR)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB9));
+    
+    EXPECT_CALL(prim, blockCP(-1, -2)).WillOnce(Return(12));
+    
+    EXPECT_EQ(decoder.decodeOne(), 16);
+}
+
+TEST_F(DecoderTest, CPDR2)
+{
+    EXPECT_CALL(prim, fetchM1())
+        .WillOnce(Return(0xED))
+        .WillOnce(Return(0xB9));
+    
+    EXPECT_CALL(prim, blockCP(-1, -2)).WillOnce(Return(17));
+    
+    EXPECT_EQ(decoder.decodeOne(), 21);
+}
+
 }

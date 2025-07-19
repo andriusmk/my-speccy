@@ -266,6 +266,30 @@ private:
                 
                 return 5 + tstates;
             }
+            
+            case 0xA0:
+                return parts.prim.blockLD(1, 0) + tstates;
+                
+            case 0xA1:
+                return parts.prim.blockCP(1, 0) + tstates;
+
+            case 0xA8:
+                return parts.prim.blockLD(-1, 0) + tstates;
+                
+            case 0xA9:
+                return parts.prim.blockCP(-1, 0) + tstates;
+
+            case 0xB0:
+                return parts.prim.blockLD(1, -2) + tstates;
+                
+            case 0xB1:
+                return parts.prim.blockCP(1, -2) + tstates;
+
+            case 0xB8:
+                return parts.prim.blockLD(-1, -2) + tstates;
+                
+            case 0xB9:
+                return parts.prim.blockCP(-1, -2) + tstates;
         }
         
         return 4 + tstates;

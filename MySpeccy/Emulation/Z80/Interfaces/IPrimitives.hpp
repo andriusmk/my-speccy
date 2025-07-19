@@ -44,5 +44,7 @@ public:
     virtual void pop(Reg16) = 0;
     virtual void ex(Reg16, Reg16) = 0;
     virtual void ex(int, Reg16) = 0;
+    virtual int blockLD(int dir, int relJmp) = 0;
+    virtual int blockCP(int dir, int relJmp) = 0;
 };
 }

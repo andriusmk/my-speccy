@@ -44,6 +44,8 @@ public:
     MOCK_METHOD(void, pop, (Reg16), (final, override));
     MOCK_METHOD(void, ex, (Reg16, Reg16), (final, override));
     MOCK_METHOD(void, ex, (int, Reg16), (final, override));
+    MOCK_METHOD(int, blockLD, (int, int), (final, override));
+    MOCK_METHOD(int, blockCP, (int, int), (final, override));
 };
 
 }
