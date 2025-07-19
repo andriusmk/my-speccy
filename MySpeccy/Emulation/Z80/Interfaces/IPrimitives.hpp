@@ -42,5 +42,7 @@ public:
     virtual int getIff2() const = 0;
     virtual void push(Reg16) = 0;
     virtual void pop(Reg16) = 0;
+    virtual void ex(Reg16, Reg16) = 0;
+    virtual void ex(int, Reg16) = 0;
 };
 }

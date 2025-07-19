@@ -101,6 +101,20 @@ private:
                 parts.prim.push(qqRegs[(opcode >> 4) & 3]);
                 return 11 + tstates;
                 
+            case 0x08:
+                parts.prim.ex(AF, AF_);
+                return 4 + tstates;
+
+            case 0xEB:
+                parts.prim.ex(DE, HL);
+                return 4 + tstates;
+                
+            case 0xD9:
+                parts.prim.ex(BC, BC_);
+                parts.prim.ex(DE, DE_);
+                parts.prim.ex(HL, HL_);
+                return 4 + tstates;
+
             case 0xED:
                 return decodeED(4 + tstates);
         }
@@ -142,10 +156,14 @@ private:
                 parts.prim.pop(idx.get());
                 return 10 + tstates;
 
+            case 0xE3:
+                parts.prim.ex(parts.regs.get(SP), idx.get());
+                return 19 + tstates;
+                
             case 0xE5:
                 parts.prim.push(idx.get());
                 return 11 + tstates;
-                
+
             case 0xF9:
                 parts.regs.set(Reg16::SP, idx.getIdx());
                 return 6 + tstates;

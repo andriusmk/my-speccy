@@ -67,6 +67,11 @@ struct RegisterShortcuts
     static constexpr auto PC = Reg16::PC;
     static constexpr auto SP = Reg16::SP;
     
+    static constexpr auto BC_ = Reg16::BC_;
+    static constexpr auto DE_ = Reg16::DE_;
+    static constexpr auto HL_ = Reg16::HL_;
+    static constexpr auto AF_ = Reg16::AF_;
+
     static constexpr auto CF = Flag::C;
     static constexpr auto NF = Flag::N;
     static constexpr auto PF = Flag::P;

@@ -42,6 +42,8 @@ public:
     MOCK_METHOD(int, getIff2, (), (const, final, override));
     MOCK_METHOD(void, push, (Reg16), (final, override));
     MOCK_METHOD(void, pop, (Reg16), (final, override));
+    MOCK_METHOD(void, ex, (Reg16, Reg16), (final, override));
+    MOCK_METHOD(void, ex, (int, Reg16), (final, override));
 };
 
 }

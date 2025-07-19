@@ -19,11 +19,6 @@
 
 namespace Z80 {
 
-using ::testing::ValuesIn;
-using ::testing::Combine;
-using ::testing::Return;
-
-using DDReg = std::tuple<Reg16, uint8_t>;
 using DDRegTestParam = std::tuple<DDReg, uint16_t>;
 using TwoValuesParam = std::tuple<uint16_t, uint16_t>;
 using TwoValuesIdxParam = std::tuple<uint16_t, uint16_t, DDReg>;
@@ -41,25 +36,6 @@ constexpr std::array<DDReg, 4> qqRegs {
     std::make_tuple(Reg16::HL, 0b00100000),
     std::make_tuple(Reg16::AF, 0b00110000)
 };
-
-constexpr std::array<DDReg, 2> idxRegs {
-    std::make_tuple(Reg16::IX, 0xDD),
-    std::make_tuple(Reg16::IY, 0xFD)
-};
-
-constexpr std::array<uint16_t, 10> values16 {
-    0x0000,
-    0x5555,
-    0x5500,
-    0x0055,
-    0xAAAA,
-    0xAA00,
-    0x00AA,
-    0x55AA,
-    0xAA55,
-    0xFFFF
-};
-
 
 class DDRegisterTest : public DecoderTest, public ::testing::WithParamInterface<DDRegTestParam>
 {
@@ -91,18 +67,7 @@ class TwoValues16RegTest : public DecoderTest, public ::testing::WithParamInterf
 
 INSTANTIATE_TEST_SUITE_P(, TwoValues16RegTest, Combine(ValuesIn(values16), ValuesIn(values16), ValuesIn(ddRegs)));
 
-class Values16Test : public DecoderTest, public ::testing::WithParamInterface<uint16_t>
-{
-};
 
-INSTANTIATE_TEST_SUITE_P(, Values16Test, ValuesIn(values16));
-
-class Values16IdxTest : public DecoderTest,
-public ::testing::WithParamInterface<std::tuple<uint16_t, DDReg>>
-{
-};
-
-INSTANTIATE_TEST_SUITE_P(, Values16IdxTest, Combine(ValuesIn(values16), ValuesIn(idxRegs)));
 
 class QQRegTest : public DecoderTest, public ::testing::WithParamInterface<DDReg>
 {

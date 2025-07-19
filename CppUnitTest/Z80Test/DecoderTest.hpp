@@ -29,6 +29,28 @@ using ::testing::_;
 using ::testing::Return;
 using ::testing::SaveArg;
 using ::testing::Values;
+using ::testing::ValuesIn;
+using ::testing::Combine;
+
+using DDReg = std::tuple<Reg16, uint8_t>;
+
+constexpr std::array<uint16_t, 10> values16 {
+    0x0000,
+    0x5555,
+    0x5500,
+    0x0055,
+    0xAAAA,
+    0xAA00,
+    0x00AA,
+    0x55AA,
+    0xAA55,
+    0xFFFF
+};
+
+constexpr std::array<DDReg, 2> idxRegs {
+    std::make_tuple(Reg16::IX, 0xDD),
+    std::make_tuple(Reg16::IY, 0xFD)
+};
 
 class DecoderTest : public ::testing::Test
 {
@@ -91,6 +113,13 @@ public:
     uint8_t finalFlags;
 };
 
-INSTANTIATE_TEST_SUITE_P(, DecoderFlagsTest, Values(0x00, 0xFF));
+class Values16Test : public DecoderTest, public ::testing::WithParamInterface<uint16_t>
+{
+};
+
+class Values16IdxTest : public DecoderTest,
+public ::testing::WithParamInterface<std::tuple<uint16_t, DDReg>>
+{
+};
 
 }
