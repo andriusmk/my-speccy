@@ -16,6 +16,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include "Interfaces/API.hpp"
 
@@ -37,5 +38,5 @@ public:
 
 private:
     class Impl;
-    Impl* impl;
+    std::unique_ptr<Impl> impl;
 };

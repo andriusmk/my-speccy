@@ -104,19 +104,13 @@ private:
     uint8_t isVSync : 1;
 };
 
-Machine::Machine() : impl(new Impl)
+Machine::Machine() : impl{std::make_unique<Machine::Impl>()}
 {
 }
 
-Machine::Machine(Machine&& other) noexcept : impl(other.impl)
-{
-    other.impl = nullptr;
-}
+Machine::Machine(Machine&& other) noexcept = default;
 
-Machine::~Machine()
-{
-    delete impl;
-}
+Machine::~Machine() = default;
 
 FrameInfo Machine::frameInfo() const
 {
