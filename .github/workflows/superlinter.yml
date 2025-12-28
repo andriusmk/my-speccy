@@ -15,5 +15,4 @@ jobs:
             env:
                 DEFAULT_BRANCH: main
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                VALIDATE_CLANG_FORMAT: false
 
