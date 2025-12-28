@@ -15,11 +15,11 @@
 //
 #pragma once
 
-class IBus {
-public:
+class IBus
+{
+  public:
     virtual ~IBus() = default;
-    
+
     virtual int read(int addr) const = 0;
     virtual void write(int addr, int data) = 0;
 };
-

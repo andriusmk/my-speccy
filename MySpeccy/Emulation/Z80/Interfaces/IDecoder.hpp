@@ -15,14 +15,15 @@
 //
 #pragma once
 
-namespace Z80 {
+namespace Z80
+{
 
 class IDecoder
 {
-public:
+  public:
     virtual ~IDecoder() = default;
-    
+
     virtual int decodeOne() = 0;
 };
 
-}
+} // namespace Z80

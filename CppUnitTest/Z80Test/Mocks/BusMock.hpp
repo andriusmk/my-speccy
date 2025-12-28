@@ -19,8 +19,9 @@
 
 #include <gmock/gmock.h>
 
-class BusMock : public IBus {
-public:
+class BusMock : public IBus
+{
+  public:
     MOCK_METHOD(int, read, (int), (const, final, override));
     MOCK_METHOD(void, write, (int, int), (final, override));
 };

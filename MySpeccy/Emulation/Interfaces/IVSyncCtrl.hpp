@@ -17,8 +17,8 @@
 
 class IVSyncCtrl
 {
-public:
+  public:
     virtual ~IVSyncCtrl() = default;
-    
+
     virtual void vSync(int cycles) = 0;
 };

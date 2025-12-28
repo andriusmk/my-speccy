@@ -15,21 +15,21 @@
 //
 #pragma once
 
-#include "Interfaces/IBus.hpp"
 #include "Interfaces/IBorderCtrl.hpp"
+#include "Interfaces/IBus.hpp"
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 class IOBus : public IBus
 {
-public:
+  public:
     IOBus(IBorderCtrl& borderCtrl) : borderCtrl{borderCtrl}, columns{}
     {
     }
-    
+
     IOBus(const IOBus&) = delete;
-    
+
     int read(int addr) const final override
     {
         int result = 0xFF;
@@ -46,7 +46,7 @@ public:
         }
         return result;
     }
-    
+
     void write(int addr, int data) final override
     {
         if ((addr & 1) == 0)
@@ -54,18 +54,18 @@ public:
             borderCtrl.setBorder(data & 7);
         }
     }
-    
+
     void keyDown(uint32_t key)
     {
         columns[key >> 5] |= key & 0x1F;
     }
-    
+
     void keyUp(uint32_t key)
     {
         columns[key >> 5] &= ~(key & 0x1F);
     }
 
-private:
+  private:
     IBorderCtrl& borderCtrl;
     std::array<std::uint8_t, 8> columns;
 };

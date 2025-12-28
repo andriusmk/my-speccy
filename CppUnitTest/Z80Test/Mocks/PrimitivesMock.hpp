@@ -19,11 +19,12 @@
 
 #include <gmock/gmock.h>
 
-namespace Z80 {
+namespace Z80
+{
 
 class PrimitivesMock : public IPrimitives
 {
-public:
+  public:
     MOCK_METHOD(int, fetchM1, (), (final, override));
     MOCK_METHOD(int, fetch8, (), (final, override));
     MOCK_METHOD(int, fetch16, (), (final, override));
@@ -48,4 +49,4 @@ public:
     MOCK_METHOD(int, blockCP, (int, int), (final, override));
 };
 
-}
+} // namespace Z80

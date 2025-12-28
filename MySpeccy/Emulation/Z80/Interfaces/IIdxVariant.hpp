@@ -15,32 +15,33 @@
 //
 #pragma once
 
-namespace Z80 {
+namespace Z80
+{
 
 class IIdxVariant
 {
-public:
+  public:
     virtual ~IIdxVariant() = default;
-    
+
     virtual int takeTstates() = 0;
-    
+
     virtual void halt() = 0;
-    
+
     virtual int indirectFromHL() = 0;
     virtual void indirectToHL(int) = 0;
     virtual void indirectToHLfromN() = 0;
-    
+
     virtual void indirectNNtoHL() = 0;
     virtual void indirectNNfromHL() = 0;
 
     virtual void load(Reg8 dst, Reg8 src) = 0;
     virtual void loadN(Reg8 dst) = 0;
     virtual void loadNN() = 0;
-    
+
     virtual int getIdx() = 0;
     virtual void setIdx(int) = 0;
-    
+
     virtual Reg16 get() const = 0;
 };
 
-}
+} // namespace Z80

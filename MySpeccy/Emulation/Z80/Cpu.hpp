@@ -16,71 +16,68 @@
 //
 #pragma once
 
+#include "CpuState.hpp"
 #include "Interfaces/IBus.hpp"
 #include "Interfaces/IRegisters.hpp"
-#include "CpuState.hpp"
 
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
 
-namespace Z80 {
+namespace Z80
+{
 
 class Cpu
 {
-public:
+  public:
     Cpu(IBus& memory, IBus& io, CpuState* const extState = nullptr)
-      : memory{memory}, io{io}, state(extState != nullptr ? *extState : internalState),
-    test{0x4000}
+        : memory{memory}, io{io}, state(extState != nullptr ? *extState : internalState), test{0x4000}
     {
         testFun();
         for (int i = 0; i < 192 * 32 + 24 * 32; i++)
         {
             writeRandomByte();
         }
-//        for (int i = 0; i < 8; i++)
-//        {
-//            memory.write(0x4000 + 192 * 32 + i, i << 3);
-//        }
-//        for (int i = 0; i < 8; i++)
-//        {
-//            memory.write(0x4000 + 192 * 32 + 32 + i, 0x40 | (i << 3));
-//        }
+        //        for (int i = 0; i < 8; i++)
+        //        {
+        //            memory.write(0x4000 + 192 * 32 + i, i << 3);
+        //        }
+        //        for (int i = 0; i < 8; i++)
+        //        {
+        //            memory.write(0x4000 + 192 * 32 + 32 + i, 0x40 | (i << 3));
+        //        }
     }
-    
+
     Cpu(const Cpu&) = delete;
-    
+
     void reset()
     {
     }
-    
+
     void testFun()
     {
         for (int i = 0x4000; i < 0x4000 + 192 * 32; i++)
         {
             memory.write(i, 0);
         }
-        
+
         for (int i = 0x4000 + 192 * 32; i < 0x4000 + 192 * 32 + 24 * 32; i++)
         {
             memory.write(i, 0x38);
         }
-        
+
         // test = 0x4000;
     }
-    
+
     int executeOne()
     {
         return 4;
     }
 
-    
-    
     void setInterrupt()
     {
-        
     }
-    
+
     void writeRandomByte()
     {
         memory.write(test, std::rand());
@@ -95,16 +92,16 @@ public:
             reset();
         }
     }
-    
+
     void clearIterrupt()
     {
     }
-    
+
     void triggerNMI()
     {
     }
-    
-private:
+
+  private:
     CpuState internalState;
     IBus& memory;
     IBus& io;
@@ -112,4 +109,4 @@ private:
     std::uint16_t test;
 };
 
-}
+} // namespace Z80

@@ -17,8 +17,8 @@
 
 #include <cstdint>
 
-
-struct FrameInfo{
+struct FrameInfo
+{
     std::uint16_t width;
     std::uint16_t height;
     std::uint16_t bytesPerRow;

@@ -17,13 +17,14 @@
 
 #include "IRegisters.hpp"
 
-namespace Z80 {
+namespace Z80
+{
 
 class IPrimitives
 {
-public:
+  public:
     virtual ~IPrimitives() = default;
-    
+
     virtual int fetchM1() = 0;
     virtual int fetch8() = 0;
     virtual int fetch16() = 0;
@@ -47,4 +48,4 @@ public:
     virtual int blockLD(int dir, int relJmp) = 0;
     virtual int blockCP(int dir, int relJmp) = 0;
 };
-}
+} // namespace Z80

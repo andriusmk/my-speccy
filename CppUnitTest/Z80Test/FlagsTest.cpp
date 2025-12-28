@@ -18,17 +18,18 @@
 
 #include <gtest/gtest.h>
 
-namespace Z80 {
+namespace Z80
+{
 
 using ::testing::Return;
 
 class FlagsTest : public ::testing::Test
 {
-public:
+  public:
     void SetUp()
     {
     }
-    
+
     void TearDown()
     {
     }
@@ -40,7 +41,7 @@ TEST_F(FlagsTest, NoChange)
 {
     EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(0x42));
     EXPECT_CALL(regs, set(Reg8::Flags, 0x42));
-    
+
     Flags flags(regs);
 }
 
@@ -48,9 +49,9 @@ TEST_F(FlagsTest, SetCF)
 {
     EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(0));
     EXPECT_CALL(regs, set(Reg8::Flags, 0x01));
-    
+
     Flags flags(regs);
-    
+
     flags.setFrom(0xFF, Flag::C);
 }
 
@@ -58,9 +59,9 @@ TEST_F(FlagsTest, ClearZF)
 {
     EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(0xFF));
     EXPECT_CALL(regs, set(Reg8::Flags, 0xBF));
-    
+
     Flags flags(regs);
-    
+
     flags.setFrom(0x00, Flag::Z);
 }
 
@@ -68,9 +69,9 @@ TEST_F(FlagsTest, SetHF)
 {
     EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(0));
     EXPECT_CALL(regs, set(Reg8::Flags, 0x10));
-    
+
     Flags flags(regs);
-    
+
     flags.set(Flag::H);
 }
 
@@ -78,10 +79,10 @@ TEST_F(FlagsTest, ClearNF)
 {
     EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(0xFF));
     EXPECT_CALL(regs, set(Reg8::Flags, 0xFD));
-    
+
     Flags flags(regs);
-    
+
     flags.clear(Flag::N);
 }
 
-}
+} // namespace Z80

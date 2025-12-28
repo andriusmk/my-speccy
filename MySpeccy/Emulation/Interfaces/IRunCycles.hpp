@@ -15,9 +15,10 @@
 //
 #pragma once
 
-class IRunCycles {
-public:
+class IRunCycles
+{
+  public:
     virtual ~IRunCycles() = default;
-    
+
     virtual void runCycles(int) = 0;
 };

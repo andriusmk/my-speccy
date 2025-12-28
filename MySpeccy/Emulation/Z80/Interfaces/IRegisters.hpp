@@ -15,20 +15,55 @@
 //
 #pragma once
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
-namespace Z80 {
+namespace Z80
+{
 
-enum class Reg8 : std::uint8_t {
-    C = 0, B, E, D, L, H, Flags, A, IXL, IXH, R, I, IYL, IYH, Z, W, Size
+enum class Reg8 : std::uint8_t
+{
+    C = 0,
+    B,
+    E,
+    D,
+    L,
+    H,
+    Flags,
+    A,
+    IXL,
+    IXH,
+    R,
+    I,
+    IYL,
+    IYH,
+    Z,
+    W,
+    Size
 };
 
-enum class Reg16 : std::uint8_t {
-    BC = 0, DE, HL, AF, IX, IR, IY, WZ, PC, SP, BC_, DE_, HL_, AF_, Misc, Size
+enum class Reg16 : std::uint8_t
+{
+    BC = 0,
+    DE,
+    HL,
+    AF,
+    IX,
+    IR,
+    IY,
+    WZ,
+    PC,
+    SP,
+    BC_,
+    DE_,
+    HL_,
+    AF_,
+    Misc,
+    Size
 };
 
-enum class Flag : std::uint8_t {
+enum class Flag : std::uint8_t
+{
     C = 0x01,
     N = 0x02,
     P = 0x04,
@@ -55,7 +90,7 @@ struct RegisterShortcuts
     static constexpr auto IXL = Reg8::IXL;
     static constexpr auto IYH = Reg8::IYH;
     static constexpr auto IYL = Reg8::IYL;
-    
+
     static constexpr auto BC = Reg16::BC;
     static constexpr auto DE = Reg16::DE;
     static constexpr auto HL = Reg16::HL;
@@ -66,7 +101,7 @@ struct RegisterShortcuts
     static constexpr auto WZ = Reg16::WZ;
     static constexpr auto PC = Reg16::PC;
     static constexpr auto SP = Reg16::SP;
-    
+
     static constexpr auto BC_ = Reg16::BC_;
     static constexpr auto DE_ = Reg16::DE_;
     static constexpr auto HL_ = Reg16::HL_;
@@ -85,9 +120,9 @@ struct RegisterShortcuts
 
 class IRegisters
 {
-public:
+  public:
     virtual ~IRegisters() = default;
-    
+
     virtual int get(const Reg8) const = 0;
     virtual int get(const Reg16) const = 0;
     virtual void set(const Reg8, int) = 0;
@@ -96,53 +131,46 @@ public:
 
 class Flags
 {
-public:
-    Flags(IRegisters& regs)
-        : regs{regs},
-          flags{static_cast<std::uint8_t>(regs.get(Reg8::Flags))}
+  public:
+    Flags(IRegisters& regs) : regs{regs}, flags{static_cast<std::uint8_t>(regs.get(Reg8::Flags))}
     {
     }
-    
+
     ~Flags()
     {
         regs.set(Reg8::Flags, flags);
     }
-    template<typename... Args>
-    static uint8_t combine(Args... args)
+    template <typename... Args> static uint8_t combine(Args... args)
     {
         uint8_t result = 0;
         ((result |= static_cast<uint8_t>(args)), ...);
-        
+
         return result;
     }
 
-    template<typename... Args>
-    void setFrom(int value, Args... args)
+    template <typename... Args> void setFrom(int value, Args... args)
     {
         uint8_t mask = combine(args...);
-        
+
         flags = (flags & ~mask) | (value & mask);
     }
-    
-    template<typename... Args>
-    void setIf(int value, Args... args)
+
+    template <typename... Args> void setIf(int value, Args... args)
     {
         setFrom((value != 0) * 0xFF, args...);
     }
 
-    template<typename... Args>
-    void set(Args... args)
+    template <typename... Args> void set(Args... args)
     {
         setFrom(0xFF, args...);
     }
-    
-    template<typename... Args>
-    void clear(Args... args)
+
+    template <typename... Args> void clear(Args... args)
     {
         setFrom(0x00, args...);
     }
 
-private:
+  private:
     IRegisters& regs;
     std::uint8_t flags;
 };
@@ -157,4 +185,4 @@ static constexpr Reg8 high(Reg16 reg)
     return Reg8((static_cast<uint8_t>(reg) << 1) + 1);
 }
 
-}
+} // namespace Z80

@@ -15,10 +15,11 @@
 //
 #include "DecoderTest.hpp"
 
-namespace Z80 {
+namespace Z80
+{
 
 INSTANTIATE_TEST_SUITE_P(, DecoderFlagsTest, Values(0x00, 0xFF));
 INSTANTIATE_TEST_SUITE_P(, Values16Test, ValuesIn(values16));
 INSTANTIATE_TEST_SUITE_P(, Values16IdxTest, Combine(ValuesIn(values16), ValuesIn(idxRegs)));
 
-}
+} // namespace Z80

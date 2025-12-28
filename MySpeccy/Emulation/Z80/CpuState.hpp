@@ -17,16 +17,18 @@
 
 #include <cstdint>
 
-namespace Z80 {
+namespace Z80
+{
 
-
-struct CpuState {
+struct CpuState
+{
     struct SwitchableSet
     {
         uint16_t regs[3];
     };
     union {
-        struct {
+        struct
+        {
             uint16_t BC;
             uint16_t DE;
             uint16_t HL;
@@ -35,7 +37,8 @@ struct CpuState {
             uint16_t IX;
             uint16_t IY;
         };
-        struct {
+        struct
+        {
             uint8_t C;
             uint8_t B;
             uint8_t E;
@@ -60,8 +63,8 @@ struct CpuState {
     uint16_t PC;
     uint16_t SP;
     uint16_t WZ;
-    uint8_t IFF1 :1;
-    uint8_t IFF2 :1;
+    uint8_t IFF1 : 1;
+    uint8_t IFF2 : 1;
 };
 
-}
+} // namespace Z80

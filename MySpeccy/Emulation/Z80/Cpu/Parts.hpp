@@ -16,11 +16,12 @@
 #pragma once
 
 #include "Interfaces/IBus.hpp"
-#include "Z80/Interfaces/IRegisters.hpp"
-#include "Z80/Interfaces/IPrimitives.hpp"
 #include "Z80/Interfaces/IDecoder.hpp"
+#include "Z80/Interfaces/IPrimitives.hpp"
+#include "Z80/Interfaces/IRegisters.hpp"
 
-namespace Z80 {
+namespace Z80
+{
 
 struct Parts
 {
@@ -31,4 +32,4 @@ struct Parts
     IDecoder& dec;
 };
 
-}
+} // namespace Z80

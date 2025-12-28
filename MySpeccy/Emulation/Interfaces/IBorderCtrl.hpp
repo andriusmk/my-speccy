@@ -17,8 +17,8 @@
 
 class IBorderCtrl
 {
-public:
+  public:
     virtual ~IBorderCtrl() = default;
-    
+
     virtual void setBorder(int) = 0;
 };

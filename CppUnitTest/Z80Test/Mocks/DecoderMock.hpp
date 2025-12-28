@@ -19,12 +19,13 @@
 
 #include <gmock/gmock.h>
 
-namespace Z80 {
+namespace Z80
+{
 
 class DecoderMock : public IPrimitives
 {
-public:
+  public:
     MOCK_METHOD(int, decodeOne, (), (final, override));
 };
 
-}
+} // namespace Z80

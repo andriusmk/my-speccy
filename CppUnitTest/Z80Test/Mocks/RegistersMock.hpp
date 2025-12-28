@@ -19,14 +19,15 @@
 
 #include <gmock/gmock.h>
 
-namespace Z80 {
+namespace Z80
+{
 
 class RegistersMock : public IRegisters
 {
-public:
+  public:
     MOCK_METHOD(int, get, (const Reg8), (const, final, override));
     MOCK_METHOD(int, get, (const Reg16), (const, final, override));
     MOCK_METHOD(void, set, (const Reg8, int), (final, override));
     MOCK_METHOD(void, set, (const Reg16, int), (final, override));
 };
-}
+} // namespace Z80

@@ -15,32 +15,28 @@
 //
 
 #include "Machine.hpp"
-#include "Screen.hpp"
-#include "Memory.hpp"
 #include "IOBus.hpp"
+#include "Memory.hpp"
+#include "Screen.hpp"
 #include "Z80/Cpu.hpp"
 
-#include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 using Z80::Cpu;
 
 class Machine::Impl : public IVSyncCtrl
 {
-public:
-    Impl()
-    : screen{memory.screenBus(), *this},
-    ioBus{screen},
-    cpu{memory, ioBus},
-    audioSamples{0},
-    intCycles{0}
+  public:
+    Impl() : screen{memory.screenBus(), *this}, ioBus{screen}, cpu{memory, ioBus}, audioSamples{0}, intCycles{0}
     {
         std::srand(std::time({}));
     }
-    
-    FrameInfo frameInfo() const {
+
+    FrameInfo frameInfo() const
+    {
         return Screen::frameInfo;
     }
 
@@ -49,7 +45,7 @@ public:
         isVSync = 1;
         vSyncCycles = std::min<int>(cycles, 255);
     }
-    
+
     void processFrame(FrameData& data)
     {
         isVSync = 0;
@@ -69,31 +65,32 @@ public:
         }
         const int vSyncBefore = lastCycles - vSyncCycles;
         intCycles = std::max<int>(32 - vSyncBefore, 0);
-        if (intCycles > 0) {
+        if (intCycles > 0)
+        {
             cpu.setInterrupt();
         }
-        
+
         data.pixels = screen.pixels();
         std::fill_n(data.audioBuffer.buffer, 882, 0);
         data.audioSamplesProduced = 882;
     }
-    
+
     void keyDown(uint32_t key)
     {
         ioBus.keyDown(key);
     }
-    
+
     void keyUp(uint32_t key)
     {
         ioBus.keyUp(key);
     }
-    
+
     void loadROM(const uint8_t* data, uint32_t size)
     {
         memory.loadRom(std::span<const uint8_t>(data, size));
     }
 
-private:
+  private:
     Memory memory;
     Screen screen;
     IOBus ioBus;

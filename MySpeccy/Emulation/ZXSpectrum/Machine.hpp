@@ -20,23 +20,24 @@
 
 #include "Interfaces/API.hpp"
 
-class Machine {
-public:
+class Machine
+{
+  public:
     Machine();
     Machine(Machine&&) noexcept;
-    
+
     Machine(const Machine&) = delete;
     Machine& operator=(const Machine&) = delete;
-    
+
     ~Machine();
-    
+
     FrameInfo frameInfo() const;
     void processFrame(FrameData&);
     void keyDown(uint32_t);
     void keyUp(uint32_t);
     void loadROM(const uint8_t*, uint32_t);
 
-private:
+  private:
     class Impl;
     std::unique_ptr<Impl> impl;
 };

@@ -17,18 +17,18 @@
 
 #include "Interfaces/IBus.hpp"
 
-#include <array>
-#include <span>
-#include <cstdint>
 #include <algorithm>
+#include <array>
+#include <cstdint>
 #include <cstdlib>
 #include <ctime>
+#include <span>
 
 class Memory : public IBus
 {
-public:
+  public:
     using ByteSpan = std::span<std::uint8_t>;
-    
+
     static constexpr std::size_t romSize{0x4000};
     static constexpr std::size_t ramSize{0xC000};
     static constexpr std::size_t screenOffset{0};
@@ -39,52 +39,62 @@ public:
     Memory() : screenBus_{std::span{ram}.subspan(screenOffset, screenSize)}
     {
     }
-    
+
     Memory(const Memory&) = delete;
-    
-    void loadRom(std::span<const std::uint8_t> content) {
+
+    void loadRom(std::span<const std::uint8_t> content)
+    {
         const auto copySize = std::min(content.size(), rom.size());
         std::copy(content.begin(), content.begin() + copySize, rom.begin());
     }
-    
-    int read(int addr) const final override {
+
+    int read(int addr) const final override
+    {
         addr &= 0xFFFF;
-        if (addr < romSize) {
+        if (addr < romSize)
+        {
             return rom[addr];
         }
         return ram[addr - romSize];
     }
-    
-    void write(int addr, int data) final override {
+
+    void write(int addr, int data) final override
+    {
         addr &= 0xFFFF;
-        if (addr >= romSize) {
+        if (addr >= romSize)
+        {
             ram[addr - romSize] = data;
         }
     }
-    
-    const IBus& screenBus() {
+
+    const IBus& screenBus()
+    {
         return screenBus_;
     }
 
-private:
+  private:
     class ScreenBus : public IBus
     {
-    public:
-        ScreenBus(const ByteSpan span) : span(span) {}
-        
+      public:
+        ScreenBus(const ByteSpan span) : span(span)
+        {
+        }
+
         ScreenBus(const ScreenBus&) = delete;
-        
-        int read(int addr) const final override {
+
+        int read(int addr) const final override
+        {
             return span[addr];
         }
-        
-        void write(int addr, int data) final override {
+
+        void write(int addr, int data) final override
+        {
         }
-        
-    private:
+
+      private:
         ByteSpan span;
     };
-    
+
     std::array<std::uint8_t, romSize> rom;
     std::array<std::uint8_t, ramSize> ram;
     ScreenBus screenBus_;

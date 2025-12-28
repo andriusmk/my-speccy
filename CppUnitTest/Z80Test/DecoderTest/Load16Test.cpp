@@ -14,28 +14,21 @@
 //      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 #include "DecoderTest.hpp"
-#include <tuple>
 #include <array>
+#include <tuple>
 
-namespace Z80 {
+namespace Z80
+{
 
 using DDRegTestParam = std::tuple<DDReg, uint16_t>;
 using TwoValuesParam = std::tuple<uint16_t, uint16_t>;
 using TwoValuesIdxParam = std::tuple<uint16_t, uint16_t, DDReg>;
 
-constexpr std::array<DDReg, 4> ddRegs {
-    std::make_tuple(Reg16::BC, 0b00000000),
-    std::make_tuple(Reg16::DE, 0b00010000),
-    std::make_tuple(Reg16::HL, 0b00100000),
-    std::make_tuple(Reg16::SP, 0b00110000)
-};
+constexpr std::array<DDReg, 4> ddRegs{std::make_tuple(Reg16::BC, 0b00000000), std::make_tuple(Reg16::DE, 0b00010000),
+                                      std::make_tuple(Reg16::HL, 0b00100000), std::make_tuple(Reg16::SP, 0b00110000)};
 
-constexpr std::array<DDReg, 4> qqRegs {
-    std::make_tuple(Reg16::BC, 0b00000000),
-    std::make_tuple(Reg16::DE, 0b00010000),
-    std::make_tuple(Reg16::HL, 0b00100000),
-    std::make_tuple(Reg16::AF, 0b00110000)
-};
+constexpr std::array<DDReg, 4> qqRegs{std::make_tuple(Reg16::BC, 0b00000000), std::make_tuple(Reg16::DE, 0b00010000),
+                                      std::make_tuple(Reg16::HL, 0b00100000), std::make_tuple(Reg16::AF, 0b00110000)};
 
 class DDRegisterTest : public DecoderTest, public ::testing::WithParamInterface<DDRegTestParam>
 {
@@ -67,8 +60,6 @@ class TwoValues16RegTest : public DecoderTest, public ::testing::WithParamInterf
 
 INSTANTIATE_TEST_SUITE_P(, TwoValues16RegTest, Combine(ValuesIn(values16), ValuesIn(values16), ValuesIn(ddRegs)));
 
-
-
 class QQRegTest : public DecoderTest, public ::testing::WithParamInterface<DDReg>
 {
 };
@@ -85,13 +76,12 @@ TEST_P(DDRegisterTest, LoadImmediate)
 {
     const auto [regWithId, value] = GetParam();
     const auto [reg, regId] = regWithId;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(0x01 | regId));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0x01 | regId));
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(value));
     EXPECT_CALL(regs, set(reg, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 10);
 }
 
@@ -99,14 +89,12 @@ TEST_P(IdxRegTest, LoadImmediate)
 {
     const auto [regWithPrefix, value] = GetParam();
     const auto [reg, prefix] = regWithPrefix;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0x21));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0x21));
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(value));
     EXPECT_CALL(regs, set(reg, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 14);
 }
 
@@ -114,11 +102,11 @@ TEST_P(TwoValues16Test, IndirectNNfromHL)
 {
     auto [addr, value] = GetParam();
     EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0x22));
-    
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(regs, get(Reg16::HL)).WillOnce(Return(value));
     EXPECT_CALL(prim, write16(addr, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 16);
 }
 
@@ -126,15 +114,13 @@ TEST_P(TwoValues16IdxTest, IndirectNNfromHL)
 {
     auto [addr, value, idx] = GetParam();
     auto [reg, prefix] = idx;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0x22));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0x22));
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(regs, get(reg)).WillOnce(Return(value));
     EXPECT_CALL(prim, write16(addr, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 20);
 }
 
@@ -142,7 +128,7 @@ TEST_P(TwoValues16Test, IndirectNNtoHL)
 {
     auto [addr, value] = GetParam();
     EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0x2A));
-    
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(prim, read16(addr)).WillOnce(Return(value));
     EXPECT_CALL(regs, set(Reg16::HL, value));
@@ -154,11 +140,9 @@ TEST_P(TwoValues16IdxTest, IndirectNNtoHL)
 {
     auto [addr, value, idx] = GetParam();
     auto [reg, prefix] = idx;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0x2A));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0x2A));
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(prim, read16(addr)).WillOnce(Return(value));
     EXPECT_CALL(regs, set(reg, value));
@@ -171,9 +155,7 @@ TEST_P(TwoValues16RegTest, IndirectNNfromDDReg)
     auto [addr, value, ddreg] = GetParam();
     auto [reg, idx] = ddreg;
 
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(0xED))
-        .WillOnce(Return(0x43 | idx));
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xED)).WillOnce(Return(0x43 | idx));
 
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(regs, get(reg)).WillOnce(Return(value));
@@ -186,11 +168,9 @@ TEST_P(TwoValues16RegTest, IndirectNNtoDDReg)
 {
     auto [addr, value, ddreg] = GetParam();
     auto [reg, idx] = ddreg;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(0xED))
-        .WillOnce(Return(0x4B | idx));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xED)).WillOnce(Return(0x4B | idx));
+
     EXPECT_CALL(prim, fetch16()).WillOnce(Return(addr));
     EXPECT_CALL(prim, read16(addr)).WillOnce(Return(value));
     EXPECT_CALL(regs, set(reg, value));
@@ -201,12 +181,12 @@ TEST_P(TwoValues16RegTest, IndirectNNtoDDReg)
 TEST_P(Values16Test, LoadSPfromHL)
 {
     auto value = GetParam();
-    
+
     EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xF9));
-    
+
     EXPECT_CALL(regs, get(Reg16::HL)).WillOnce(Return(value));
     EXPECT_CALL(regs, set(Reg16::SP, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 6);
 }
 
@@ -214,62 +194,56 @@ TEST_P(Values16IdxTest, LoadSPfromIdx)
 {
     auto [value, idx] = GetParam();
     auto [reg, prefix] = idx;
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0xF9));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0xF9));
+
     EXPECT_CALL(regs, get(reg)).WillOnce(Return(value));
     EXPECT_CALL(regs, set(Reg16::SP, value));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 10);
 }
 
 TEST_P(QQRegTest, Push)
 {
     auto [reg, idx] = GetParam();
-    
+
     EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xC5 | idx));
-    
+
     EXPECT_CALL(prim, push(reg));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 11);
 }
 
 TEST_P(QQIdxRegTest, Push)
 {
     auto [reg, prefix] = GetParam();
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0xE5));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0xE5));
+
     EXPECT_CALL(prim, push(reg));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 15);
 }
 
 TEST_P(QQRegTest, Pop)
 {
     auto [reg, idx] = GetParam();
-    
+
     EXPECT_CALL(prim, fetchM1()).WillOnce(Return(0xC1 | idx));
-    
+
     EXPECT_CALL(prim, pop(reg));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 10);
 }
 
 TEST_P(QQIdxRegTest, Pop)
 {
     auto [reg, prefix] = GetParam();
-    
-    EXPECT_CALL(prim, fetchM1())
-        .WillOnce(Return(prefix))
-        .WillOnce(Return(0xE1));
-    
+
+    EXPECT_CALL(prim, fetchM1()).WillOnce(Return(prefix)).WillOnce(Return(0xE1));
+
     EXPECT_CALL(prim, pop(reg));
-    
+
     EXPECT_EQ(decoder.decodeOne(), 14);
 }
-}
+} // namespace Z80

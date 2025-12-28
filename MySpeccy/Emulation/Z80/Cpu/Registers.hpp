@@ -15,10 +15,11 @@
 //
 #pragma once
 
-namespace Z80 {
+namespace Z80
+{
 
-class Registers {
-    
+class Registers
+{
 }
 
-}
+} // namespace Z80

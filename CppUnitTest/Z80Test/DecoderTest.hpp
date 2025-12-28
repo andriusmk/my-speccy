@@ -15,56 +15,42 @@
 //
 #pragma once
 
-#include "Z80/Cpu/Decoder.hpp"
-#include "Mocks/PrimitivesMock.hpp"
 #include "Mocks/BusMock.hpp"
+#include "Mocks/PrimitivesMock.hpp"
 #include "Mocks/RegistersMock.hpp"
+#include "Z80/Cpu/Decoder.hpp"
 
-#include <gtest/gtest.h>
 #include <cstdint>
+#include <gtest/gtest.h>
 
-namespace Z80 {
+namespace Z80
+{
 
 using ::testing::_;
+using ::testing::Combine;
 using ::testing::Return;
 using ::testing::SaveArg;
 using ::testing::Values;
 using ::testing::ValuesIn;
-using ::testing::Combine;
 
 using DDReg = std::tuple<Reg16, uint8_t>;
 
-constexpr std::array<uint16_t, 10> values16 {
-    0x0000,
-    0x5555,
-    0x5500,
-    0x0055,
-    0xAAAA,
-    0xAA00,
-    0x00AA,
-    0x55AA,
-    0xAA55,
-    0xFFFF
-};
+constexpr std::array<uint16_t, 10> values16{0x0000, 0x5555, 0x5500, 0x0055, 0xAAAA,
+                                            0xAA00, 0x00AA, 0x55AA, 0xAA55, 0xFFFF};
 
-constexpr std::array<DDReg, 2> idxRegs {
-    std::make_tuple(Reg16::IX, 0xDD),
-    std::make_tuple(Reg16::IY, 0xFD)
-};
+constexpr std::array<DDReg, 2> idxRegs{std::make_tuple(Reg16::IX, 0xDD), std::make_tuple(Reg16::IY, 0xFD)};
 
 class DecoderTest : public ::testing::Test
 {
-public:
-    template<typename... Args>
-    void setInitialFlags(Args... args)
+  public:
+    template <typename... Args> void setInitialFlags(Args... args)
     {
         flags = Flags::combine(args...);
         EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(flags));
         EXPECT_CALL(regs, set(Reg8::Flags, _)).WillOnce(SaveArg<1>(&flags));
     }
-    
-    template<typename... Args>
-    void verifyFlags(Args... args)
+
+    template <typename... Args> void verifyFlags(Args... args)
     {
         EXPECT_EQ(flags, Flags::combine(args...));
     }
@@ -73,38 +59,34 @@ public:
     BusMock io;
     PrimitivesMock prim;
     RegistersMock regs;
-    Parts parts {.mem = mem, .io = io, .regs = regs, .prim = prim, .dec = decoder };
+    Parts parts{.mem = mem, .io = io, .regs = regs, .prim = prim, .dec = decoder};
     Decoder decoder{parts};
     uint8_t flags;
 };
 
-class DecoderFlagsTest : public DecoderTest,
-                         public ::testing::WithParamInterface<uint8_t>
+class DecoderFlagsTest : public DecoderTest, public ::testing::WithParamInterface<uint8_t>
 {
-public:
+  public:
     void SetUp() final override
     {
         flags = GetParam();
         EXPECT_CALL(regs, get(Reg8::Flags)).WillOnce(Return(flags));
         EXPECT_CALL(regs, set(Reg8::Flags, _)).WillOnce(SaveArg<1>(&finalFlags));
     }
-    
-    template<typename... Args>
-    void verifySet(Args... args)
+
+    template <typename... Args> void verifySet(Args... args)
     {
         uint8_t testFlags = Flags::combine(args...);
         EXPECT_EQ(finalFlags & testFlags, testFlags);
     }
-    
-    template<typename... Args>
-    void verifyCleared(Args... args)
+
+    template <typename... Args> void verifyCleared(Args... args)
     {
         uint8_t testFlags = Flags::combine(args...);
         EXPECT_EQ(finalFlags & testFlags, 0);
     }
-    
-    template<typename... Args>
-    void verifyUnchanged(Args... args)
+
+    template <typename... Args> void verifyUnchanged(Args... args)
     {
         uint8_t testFlags = Flags::combine(args...);
         EXPECT_EQ(finalFlags & testFlags, flags & testFlags);
@@ -117,9 +99,8 @@ class Values16Test : public DecoderTest, public ::testing::WithParamInterface<ui
 {
 };
 
-class Values16IdxTest : public DecoderTest,
-public ::testing::WithParamInterface<std::tuple<uint16_t, DDReg>>
+class Values16IdxTest : public DecoderTest, public ::testing::WithParamInterface<std::tuple<uint16_t, DDReg>>
 {
 };
 
-}
+} // namespace Z80

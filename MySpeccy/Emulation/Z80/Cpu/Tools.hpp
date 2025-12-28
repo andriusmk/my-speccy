@@ -15,14 +15,15 @@
 //
 #pragma once
 
-namespace Z80 {
+namespace Z80
+{
 
 inline static int isEvenParity8(int value)
 {
     value ^= (value >> 4);
     value ^= (value >> 2);
     value ^= (value >> 1);
-    
+
     return (value & 1) == 0;
 }
 
@@ -30,7 +31,7 @@ inline static int isOverflow(int a, int b, int result)
 {
     const int opSignsEqual = ~(a ^ b);
     const int resultSignDiffers = a ^ result;
-    
+
     return opSignsEqual & resultSignDiffers;
 }
 
@@ -61,4 +62,4 @@ inline static int makeCarry16(int a, int b, int result)
     return (cf & 0x10) | (cf >> 8);
 }
 
-}
+} // namespace Z80
